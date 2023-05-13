@@ -12,7 +12,7 @@ things
   key *String
 
 @aws
-runtime nodejs16.x
+runtime nodejs18.x
 architecture arm64
 
 @begin

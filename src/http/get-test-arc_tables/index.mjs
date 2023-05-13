@@ -34,7 +34,7 @@ export const handler = arc.http.async(async () => {
 	</style>
 </head>
 <body>
-	<pre><code><em>Arc service discovery<sup>2</sup>: ${arcDiscoveryTime}ms</em>
+	<pre><code><em>Arc service discovery<sup>3</sup>: ${arcDiscoveryTime}ms</em>
 <strong>Dynamo via Arc: ${time3}ms</strong>
   things.get({ key: 'one' }) → ${JSON.stringify(thing1)}
 <strong>Arc + Dynamo = <u>${arcDiscoveryTime + time3}ms</u></strong></code></pre>

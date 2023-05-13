@@ -16,7 +16,7 @@ export const handler = arc.http.async(async () => {
 			display: flex;
 			flex-direction: column;
 			gap: 1.5rem;
-			max-width: 65ch;
+			max-width: 78ch;
 			padding: 3rem 1rem;
 			margin: auto;
 			font-size: 18px;
@@ -37,30 +37,41 @@ export const handler = arc.http.async(async () => {
 			border: none;
 			background: #eee;
 		}
+		p:has(> small) {
+			line-height: 1.25;
+		}
 	</style>
 </head>
 <body>
 	<h1>
-		<a href="https://neon.tech" target="_blank">Neon</a> Postgres on
+		Database Providers on
 		<abbr title="AWS Lambda">λ</abbr> with
 		<a href="https://arc.codes" target="_blank">Architect</a>
 	</h1>
 
 	<h4>
-		Compare Neon with the official <a href="https://www.npmjs.com/package/postgres" target="_blank">postgres</a> driver,
-		Neon's ws-powered <a href="https://github.com/neondatabase/serverless" target="_blank">@neondatabase/serverless</a> β library,
-		and <a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB</a> via Arc.
+		Compare
+		<a href="https://neon.tech" target="_blank">Neon</a>,
+		<a href="https://supabase.com" target="_blank">Supabase</a>,
+		and <a href="https://planetscale.com" target="_blank">PlanetScale</a>
+		with <a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB</a>
+		via Arc.
 	</h4>
+
+	<p>
+		Use vanilla Node.js drivers like <code>postgres</code> and provided clients like <code>@neondatabase/serverless</code>.
+		Tests account for "cold starts", wake time, and service discovery.
+	</p>
 
 	<h2>Live Tests</h2>
 
-	<p><small>These timers are started <em>after</em> Lambda initialization and do not include "cold start".</small></p>
+	<p><small>These timers are started <em>after</em> Lambda initialization and do not include Lambda cold start.</small></p>
 
 	<iframe src="/test/neon" height="126"></iframe>
-	<iframe src="/test/supabase" height="68"></iframe>
+	<iframe src="/test/supabase" height="162"></iframe>
 	<iframe src="/test/arc-tables" height="108"></iframe>
 
-	<p><small>It's possiblt these ↑ iframes will exceed their 5s timeout. Try a refresh.</small></p>
+	<p><small>It's possible one of these ↑ iframes will exceed its timeout. Try a refresh.</small></p>
 
 	<p><small>
 		<sup>1</sup> An initial query — <code>SELECT now()</code> — is made <em>in case</em> the Neon instance is suspended.
@@ -68,7 +79,13 @@ export const handler = arc.http.async(async () => {
 	</small></p>
 
 	<p><small>
-		<sup>2</sup> Architect's <code>#tables()</code> method is used to discover the DynamoDB table name.
+		<sup>2</sup> The <code>@supabase/supabase-js</code> package requires node-gyp to install.
+		Since these Lambdas are built and deployed dynamically, this package cannot be built without further configuration of the build environment (another Lambda).
+		Its speed is likely comparable to the REST query.
+	</small></p>
+
+	<p><small>
+		<sup>3</sup> Architect's <code>#tables()</code> method is used to discover the DynamoDB table name.
 		This lookup is cached between requests and will be 0ms when the Lambda is "warm".
 	</small></p>
 
@@ -78,32 +95,42 @@ export const handler = arc.http.async(async () => {
 
 	<p><strong>Which db should I use?</strong> Like most things in web engineering, it depends.</p>
 
-	<p><small>(Setting aside the fundamental difference of tables+rows and documents;
-		even if that's probably the most important factor.)</small></p>
+	<p><strong>First</strong>, set aside the fundamental difference of tables+rows and documents.
+		Yes, that's a key factor when choosing a database, but this is a demonstration of speed.
+	</p>
 
-	<p><mark>Neon works surprisingly well</mark> in a "cloud function" like a Lambda!
-		But at ~4s, its boot time can easily timeout a 5s Lambda.
-		On the other hand, if it is already active, the ~150ms query with the @neondatabase/serverless package
+	<p><mark>Third party providers work surprisingly well</mark> in a "cloud function" like a Lambda!</p>
+
+	<p>However, Neon's ~4s boot time is likely a deal-breaker for user-facing services.
+		It's not only a bad user experience but it can easily timeout a 5s Lambda.
+		Of course, if it is already active, the ~150ms query with the @neondatabase/serverless package
 		(<a href="https://neon.tech/blog/quicker-serverless-postgres" target="_blank">uses WebSocket instead of TCP</a>)
-		is very fast.</p>
+		is quite fast.</p>
 
-	<p>Still, using <mark>Arc + DynamoDB is the most consistent</mark> in terms of speed.
-		At its best, a query can be just a few ms! And at its worst, that initial query will be < 300ms.
+	<p>Supabase's REST API is also quite fast. Within regional differences between these Lambdas and their providers.</p>
+
+	<p>PlanetScale hasn't been tested yet.</p>
+
+	<p>Using the native <code>postgres</code> driver is not as performant as the HTTP and ws clients.
+		However, with proper pooling configuration (not featured here as it's not a simple task), queries are likely to be faster.</p>
+
+	<p><mark>DynamoDB via Architect is the most performant</mark> and consistent in terms of speed.
+		At its best, a query can be just a few ms! And at its worst, that initial query will be ~500ms.
 		It makes sense that AWS's baked in datastore would be very reliable when you need to access data quickly.</p>
 
 	<h2>Considerations</h2>
 
-	<p>This test runs on a vanilla Node.js v16 Lambda with the ARM64 architecture.
+	<p>This test runs on a vanilla Node.js v18 Lambda with the ARM64 architecture.
 		The Neon team is focused on CloudFlare Workers and Vercel Edge runtimes — which differ from this environment quite a bit.</p>
 
 	<p>Also, this test doesn't...</p>
 
 	<ul>
+		<li>chart variance</li>
 		<li>test subsequent queries</li>
-		<li>use a large dataset or a variety of operators</li>
-		<li>consider AWS regions</li>
-		<li>use the upcoming configurable auto-suspend feature from Neon</li>
-		<li>consider pricing</li>
+		<li>use a large dataset or a variety of db operations</li>
+		<li>consider AWS or provider regions</li>
+		<li>take into account pricing (examples are in service free tiers)</li>
 	</ul>
 
 	<p><small><a href="https://github.com/tbeseda/arc-ddb-vs-neon" target="_blank">Source code</a></small></p>
