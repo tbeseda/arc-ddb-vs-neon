@@ -6,6 +6,7 @@ get /
 get /test/neon
 get /test/arc-tables
 get /test/supabase
+get /test/planetscale
 
 @tables
 things

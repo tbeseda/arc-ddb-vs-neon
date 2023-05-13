@@ -1,5 +1,7 @@
 import arc from "@architect/functions";
 
+const { THIS_REGION } = process.env;
+
 export const handler = arc.http.async(async () => {
 	return {
 		html: /*html*/ `
@@ -69,7 +71,13 @@ export const handler = arc.http.async(async () => {
 
 	<iframe src="/test/neon" height="126"></iframe>
 	<iframe src="/test/supabase" height="162"></iframe>
+	<iframe src="/test/planetscale" height="50"></iframe>
 	<iframe src="/test/arc-tables" height="108"></iframe>
+
+	<pre><code>Lambda region: ${THIS_REGION}
+<em>Neon region: us-west-2</em>
+<em>Supabase region: us-east-1</em>
+<em>PlanetScale region: us-west-2</em></code></pre>
 
 	<p><small>It's possible one of these ↑ iframes will exceed its timeout. Try a refresh.</small></p>
 

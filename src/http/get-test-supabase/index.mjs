@@ -62,7 +62,7 @@ export const handler = arc.http.async(async () => {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Arc w/ Neon</title>
+	<title>Arc w/ Supabase</title>
 	<style>
 		code {
 			font-size: 0.95rem;
