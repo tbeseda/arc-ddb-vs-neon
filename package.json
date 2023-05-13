@@ -6,12 +6,13 @@
     "start": "npx arc sandbox"
   },
   "dependencies": {
-    "@architect/functions": "^5.4.0",
-    "@neondatabase/serverless": "^0.2.8",
+    "@architect/functions": "^6.0.0",
+    "@neondatabase/serverless": "^0.4.3",
+    "@supabase/supabase-js": "^2.21.0",
     "postgres": "^3.3.4",
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@architect/architect": "^10.10.3"
+    "@architect/architect": "^10.12.5"
   }
 }

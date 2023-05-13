@@ -3,7 +3,9 @@ arc-ddb-vs-neon
 
 @http
 get /
-get /test
+get /test/neon
+get /test/arc-tables
+get /test/supabase
 
 @tables
 things

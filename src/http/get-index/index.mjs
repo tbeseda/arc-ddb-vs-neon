@@ -52,13 +52,15 @@ export const handler = arc.http.async(async () => {
 		and <a href="https://aws.amazon.com/dynamodb/" target="_blank">DynamoDB</a> via Arc.
 	</h4>
 
-	<h2>Live Test</h2>
+	<h2>Live Tests</h2>
 
 	<p><small>These timers are started <em>after</em> Lambda initialization and do not include "cold start".</small></p>
 
-	<iframe src="/test" height="215"></iframe>
+	<iframe src="/test/neon" height="126"></iframe>
+	<iframe src="/test/supabase" height="68"></iframe>
+	<iframe src="/test/arc-tables" height="108"></iframe>
 
-	<p><small>It's possiblt this ↑ iframe will exceed its 5s timeout. Try a refresh.</small></p>
+	<p><small>It's possiblt these ↑ iframes will exceed their 5s timeout. Try a refresh.</small></p>
 
 	<p><small>
 		<sup>1</sup> An initial query — <code>SELECT now()</code> — is made <em>in case</em> the Neon instance is suspended.
@@ -107,11 +109,13 @@ export const handler = arc.http.async(async () => {
 	<p><small><a href="https://github.com/tbeseda/arc-ddb-vs-neon" target="_blank">Source code</a></small></p>
 
 	<script>
-		const iframe = document.querySelector("iframe");
-		iframe.onload = () => {
-			window.body = iframe.contentWindow.document.body
-			iframe.height = iframe.contentWindow.document.body.scrollHeight + 32;
-			iframe.style.background = "none";
+		const iframes = document.querySelectorAll("iframe");
+		for (const iframe of iframes) {
+			iframe.onload = () => {
+				window.body = iframe.contentWindow.document.body
+				iframe.height = iframe.contentWindow.document.body.scrollHeight + 32;
+				iframe.style.background = "none";
+			};
 		};
 	</script>
 </body>
