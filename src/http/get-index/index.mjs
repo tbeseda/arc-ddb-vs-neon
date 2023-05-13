@@ -111,8 +111,9 @@ export const handler = arc.http.async(async () => {
 
 	<p>PlanetScale hasn't been tested yet.</p>
 
-	<p>Using the native <code>postgres</code> driver is not as performant as the HTTP and ws clients.
-		However, with proper pooling configuration (not featured here as it's not a simple task), queries are likely to be faster.</p>
+	<p>Using the native <code>postgres</code> driver can be both much slower and much faster than the provider clients.
+		It is likely more dependent on AWS region (both where this Lambda lives and where the database lives).
+		With proper pooling configuration (not featured here as it's not a simple task), queries are likely to be more consistent.</p>
 
 	<p><mark>DynamoDB via Architect is the most performant</mark> and consistent in terms of speed.
 		At its best, a query can be just a few ms! And at its worst, that initial query will be ~500ms.
