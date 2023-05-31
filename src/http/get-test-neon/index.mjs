@@ -2,6 +2,7 @@ import ws from "ws"; // force Arc to hydrate ws for Lambda
 import arc from "@architect/functions";
 import { neonConfig, Pool } from "@neondatabase/serverless";
 import postgres from "postgres";
+
 const { PGUSER, PGPASSWORD, ENDPOINT_ID, PGHOST, PGDATABASE } = process.env;
 
 const DB_URL = `postgres://${PGUSER}:${PGPASSWORD}@${ENDPOINT_ID}.${PGHOST}/${PGDATABASE}`;
@@ -69,8 +70,8 @@ export const handler = arc.http.async(async () => {
 	<pre><code><em>Neon wake<sup>1</sup>: ${neonWakeTime}ms</em>
 <strong>Neon + postgres: <u>${neonPgTime}ms</u></strong>
   SELECT * FROM things → ${pgResult}
-<strong>Neon serverless: <u>${neonServerlessTime}ms</u></strong>
-  SELECT * FROM things → ${serverlessResult}</code></pre>
+<strong>@neondatabase/serverless: <u>${neonServerlessTime}ms</u></strong>
+  await pool.query("SELECT * FROM things") → ${serverlessResult}</code></pre>
 </body>
 </html>
 `,

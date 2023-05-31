@@ -76,8 +76,7 @@ export const handler = arc.http.async(async () => {
   SELECT * FROM things → ${supabasePgResult}
 <strong>Supabase via REST: <u>${supabaseRestTime}ms</u></strong>
   fetch("\${SUPABASE_URL}/rest/v1/things?select=*") → ${supabaseRestResult}
-<em>supabase-js skipped<sup>2</sup></em>
-<strong>@supabase/supabase-js: <u>\${supabaseJsTime}ms</u></strong>
+<strike>@supabase/supabase-js: <u>\${supabaseJsTime}ms</u></strike> <em>skipped<sup>2</sup></em>
   supabase.from("things").select() → \${supabaseJsResult}</code></pre>
 </body>
 </html>

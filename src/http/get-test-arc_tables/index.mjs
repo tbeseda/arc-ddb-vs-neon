@@ -11,7 +11,7 @@ export const handler = arc.http.async(async () => {
 	let time3 = Date.now();
 	let thing1;
 	try {
-		thing1 = await things?.get({ key: "one" });
+		thing1 = await things?.scan({});
 	} catch (error) {
 		console.log(error);
 	}
@@ -34,10 +34,8 @@ export const handler = arc.http.async(async () => {
 	</style>
 </head>
 <body>
-	<pre><code><em>Arc service discovery<sup>3</sup>: ${arcDiscoveryTime}ms</em>
-<strong>Dynamo via Arc: ${time3}ms</strong>
-  things.get({ key: 'one' }) → ${JSON.stringify(thing1)}
-<strong>Arc + Dynamo = <u>${arcDiscoveryTime + time3}ms</u></strong></code></pre>
+	<pre><code><strong><u>Dynamo via Arc: ${time3}ms</u></strong>
+  things.scan({}) → ${JSON.stringify(thing1?.Items)}</code></pre>
 </body>
 </html>
 `,

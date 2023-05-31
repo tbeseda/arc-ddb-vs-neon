@@ -17,7 +17,7 @@ export const handler = arc.http.async(async () => {
 		 body {
 			display: flex;
 			flex-direction: column;
-			gap: 1.5rem;
+			gap: 1rem;
 			max-width: 78ch;
 			padding: 3rem 1rem;
 			margin: auto;
@@ -62,24 +62,23 @@ export const handler = arc.http.async(async () => {
 
 	<p>
 		Use vanilla Node.js drivers like <code>postgres</code> and provided clients like <code>@neondatabase/serverless</code>.
-		Tests account for "cold starts", wake time, and service discovery.
+		Tests account for "cold starts", wake time, and client connection negotiation.
 	</p>
 
-	<h2>Live Tests</h2>
+	<h2>Live Tests <small>(in <code>${THIS_REGION}</code>)</small></h2>
 
-	<p><small>These timers are started <em>after</em> Lambda initialization and do not include Lambda cold start.</small></p>
+	<p><small>These timers are started <em>after</em> Lambda initialization and do not include Lambda cold start or client library loading (AWS's DynamoDB client is notoriously slow to load).</small></p>
 
+	<p><small>It's possible one of these ↓ iframes will exceed its timeout. Try a refresh.</small></p>
+
+	<h3>Neon.tech <small>(<code>us-west-2</code>)</small></h3>
 	<iframe src="/test/neon" height="126"></iframe>
-	<iframe src="/test/supabase" height="162"></iframe>
-	<iframe src="/test/planetscale" height="50"></iframe>
-	<iframe src="/test/arc-tables" height="108"></iframe>
-
-	<pre><code>Lambda region: ${THIS_REGION}
-<em>Neon region: us-west-2</em>
-<em>Supabase region: us-east-1</em>
-<em>PlanetScale region: us-west-2</em></code></pre>
-
-	<p><small>It's possible one of these ↑ iframes will exceed its timeout. Try a refresh.</small></p>
+	<h3>Supabase <small>(<code>us-east-1</code>)</small></h3>
+	<iframe src="/test/supabase" height="144"></iframe>
+	<h3>PlanetScale <small>(<code>us-west-2</code>)</small></h3>
+	<iframe src="/test/planetscale" height="104"></iframe>
+	<h3>DynamoDB + @architect/functions <small>(<code>${THIS_REGION}</code>)</small></h3>
+	<iframe src="/test/arc-tables" height="68"></iframe>
 
 	<p><small>
 		<sup>1</sup> An initial query — <code>SELECT now()</code> — is made <em>in case</em> the Neon instance is suspended.
@@ -90,11 +89,6 @@ export const handler = arc.http.async(async () => {
 		<sup>2</sup> The <code>@supabase/supabase-js</code> package requires node-gyp to install.
 		Since these Lambdas are built and deployed dynamically, this package cannot be built without further configuration of the build environment (another Lambda).
 		Its speed is likely comparable to the REST query.
-	</small></p>
-
-	<p><small>
-		<sup>3</sup> Architect's <code>#tables()</code> method is used to discover the DynamoDB table name.
-		This lookup is cached between requests and will be 0ms when the Lambda is "warm".
 	</small></p>
 
 	<hr />
@@ -117,15 +111,18 @@ export const handler = arc.http.async(async () => {
 
 	<p>Supabase's REST API is also quite fast. Within regional differences between these Lambdas and their providers.</p>
 
-	<p>PlanetScale hasn't been tested yet.</p>
+	<p>PlanetScale's custom driver <code>@planetscale/database</code> is faster than the native MySQL Node.js driver.
+		It's very competitive with Supabase REST and <code>@neondatabase/serverless</code>.</p>
 
-	<p>Using the native <code>postgres</code> driver can be both much slower and much faster than the provider clients.
-		It is likely more dependent on AWS region (both where this Lambda lives and where the database lives).
+	<p>Interestingly, using the native <code>postgres</code> and <code>mysql2</code> drivers can be both much slower and much faster than the provider clients.
+		It is likely dependent on AWS region (both where this Lambda lives and where the database lives).
 		With proper pooling configuration (not featured here as it's not a simple task), queries are likely to be more consistent.</p>
 
 	<p><mark>DynamoDB via Architect is the most performant</mark> and consistent in terms of speed.
-		At its best, a query can be just a few ms! And at its worst, that initial query will be ~500ms.
-		It makes sense that AWS's baked in datastore would be very reliable when you need to access data quickly.</p>
+		At its best, a query can be just a few ms!
+		(This does not account for loading the DynamoDB client into memory, which can be +-300ms, but is cached in "warm" Lambdas.)
+		It makes sense that AWS's baked in datastore would be very reliable when you need to access data quickly.
+		It does not make sense that their client be the slowest to load of the bunch.</p>
 
 	<h2>Considerations</h2>
 
@@ -135,10 +132,10 @@ export const handler = arc.http.async(async () => {
 	<p>Also, this test doesn't...</p>
 
 	<ul>
-		<li>chart variance</li>
+		<li>snapshot results or track variance</li>
 		<li>test subsequent queries</li>
 		<li>use a large dataset or a variety of db operations</li>
-		<li>consider AWS or provider regions</li>
+		<li>thoroughly test congruent AWS/db provider regions</li>
 		<li>take into account pricing (examples are in service free tiers)</li>
 	</ul>
 
