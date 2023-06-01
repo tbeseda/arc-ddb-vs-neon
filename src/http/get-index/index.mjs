@@ -101,6 +101,7 @@ export const handler = arc.http.async(async () => {
 	<p>These tests do not...</p>
 
 	<ul>
+		<li>attempt to pool or keep-alive connections</li>
 		<li>snapshot results or track variance</li>
 		<li>test subsequent queries</li>
 		<li>use a large dataset or a variety of db operations</li>
@@ -108,7 +109,7 @@ export const handler = arc.http.async(async () => {
 		<li>take into account pricing (examples are in service free tiers)</li>
 	</ul>
 
-	<p><small><a href="https://github.com/tbeseda/arc-ddb-vs-neon" target="_blank">Source code</a></small></p>
+	<p><small><a href="https://github.com/tbeseda/dbaas-lambda" target="_blank">Source code</a></small></p>
 
 	<script>
 		const iframes = document.querySelectorAll("iframe");
