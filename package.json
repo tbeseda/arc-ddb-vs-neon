@@ -1,7 +1,4 @@
 {
-  "name": "lambda-neon-vs-dynamo",
-  "version": "0.0.1",
-  "description": "",
   "scripts": {
     "start": "npx arc sandbox"
   },
