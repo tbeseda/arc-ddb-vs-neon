@@ -2,24 +2,15 @@ import arc from "@architect/functions";
 import postgres from "postgres";
 // import { createClient } from "@supabase/supabase-js";
 
-const {
-	SUPABASE_KEY,
-	SUPABASE_URL,
-	SB_PGHOST,
-	SB_PGUSER,
-	SB_PGPORT,
-	SB_PGDATABASE,
-	SB_PGPASSWORD,
-} = process.env;
-const DB_URL = `postgresql://${SB_PGUSER}:${SB_PGPASSWORD}@${SB_PGHOST}:${SB_PGPORT}/${SB_PGDATABASE}`;
+const { SB_DB_URL, SB_KEY, SB_URL } = process.env;
 
 export const handler = arc.http.async(async () => {
-	if (!(SUPABASE_KEY && SUPABASE_URL && DB_URL)) throw Error("Missing DB_URL");
+	if (!(SB_DB_URL && SB_KEY && SB_URL)) throw Error("Missing SB_DB_URL");
 
 	// Supabase with postgres
 	let supabasePgTime = Date.now();
 	let supabasePgResult;
-	const sql = postgres(DB_URL);
+	const sql = postgres(SB_DB_URL);
 	try {
 		const [thing] = await sql`SELECT * FROM things`;
 		await sql.end();
@@ -33,8 +24,8 @@ export const handler = arc.http.async(async () => {
 	let supabaseRestTime = Date.now();
 	let supabaseRestResult;
 	try {
-		const response = await fetch(`${SUPABASE_URL}/rest/v1/things?select=*`, {
-			headers: { apikey: SUPABASE_KEY },
+		const response = await fetch(`${SB_URL}/rest/v1/things?select=*`, {
+			headers: { apikey: SB_KEY },
 		});
 		const data = await response.json();
 		supabaseRestResult = JSON.stringify(data);
@@ -45,7 +36,7 @@ export const handler = arc.http.async(async () => {
 
 	// let supabaseJsTime = Date.now();
 	// let supabaseJsResult;
-	// const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+	// const supabase = createClient(SB_URL, SB_KEY);
 	// try {
 	// 	const { data, error } = await supabase.from("things").select();
 	// 	if (error) throw error;

@@ -8,14 +8,14 @@ export const handler = arc.http.async(async () => {
 
 	// Dynamo via Architect
 	await things.put({ key: "one", value: "two" });
-	let time3 = Date.now();
-	let thing1;
+	let dynamoTime = Date.now();
+	let dynamoResult;
 	try {
-		thing1 = await things?.scan({});
+		dynamoResult = await things?.scan({});
 	} catch (error) {
 		console.log(error);
 	}
-	time3 = Date.now() - time3;
+	dynamoTime = Date.now() - dynamoTime;
 
 	return {
 		html: /*html*/ `
@@ -34,8 +34,8 @@ export const handler = arc.http.async(async () => {
 	</style>
 </head>
 <body>
-	<pre><code><strong><u>Dynamo via Arc: ${time3}ms</u></strong>
-  things.scan({}) → ${JSON.stringify(thing1?.Items)}</code></pre>
+	<pre><code><strong>Dynamo via Arc: <u>${dynamoTime}ms</u></strong>
+  await things.scan({}) → ${JSON.stringify(dynamoResult?.Items)}</code></pre>
 </body>
 </html>
 `,

@@ -58,7 +58,7 @@ export const handler = arc.http.async(async () => {
 			<pre><code><strong>PlanetScale + mysql2: <u>${psMysqlTime}ms</u></strong>
   SELECT * FROM things → ${mysqlResult}
 <strong>@planetscale/database: <u>${psDriverTime}ms</u></strong>
-  await conn.execute('SELECT * FROM things') → ${psDriverResult}</code></pre>
+  await conn.execute("SELECT * FROM things") → ${psDriverResult}</code></pre>
 		</body>
 		</html>
 		`,

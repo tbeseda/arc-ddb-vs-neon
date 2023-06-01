@@ -3,18 +3,17 @@ import arc from "@architect/functions";
 import { neonConfig, Pool } from "@neondatabase/serverless";
 import postgres from "postgres";
 
-const { PGUSER, PGPASSWORD, ENDPOINT_ID, PGHOST, PGDATABASE } = process.env;
+const { NEON_DB_URL } = process.env;
 
-const DB_URL = `postgres://${PGUSER}:${PGPASSWORD}@${ENDPOINT_ID}.${PGHOST}/${PGDATABASE}`;
 neonConfig.webSocketConstructor = ws;
 
 export const handler = arc.http.async(async () => {
-	if (!DB_URL) throw Error("Missing DB_URL");
+	if (!NEON_DB_URL) throw Error("Missing NEON_DB_URL");
 
 	// wake Neon db
 	let neonWakeTime = Date.now();
 	try {
-		const sql = postgres(DB_URL, { ssl: "require" });
+		const sql = postgres(NEON_DB_URL, { ssl: "require" });
 		await sql`select now()`;
 		await sql.end();
 	} catch (error) {
@@ -25,7 +24,7 @@ export const handler = arc.http.async(async () => {
 	// Neon with postgres
 	let neonPgTime = Date.now();
 	let pgResult;
-	const sql = postgres(DB_URL, { ssl: "require" });
+	const sql = postgres(NEON_DB_URL, { ssl: "require" });
 	try {
 		const [thing] = await sql`SELECT * FROM things`;
 		await sql.end();
@@ -38,7 +37,7 @@ export const handler = arc.http.async(async () => {
 	// Neon "Serverless" mode
 	let neonServerlessTime = Date.now();
 	let serverlessResult;
-	const pool = new Pool({ connectionString: DB_URL });
+	const pool = new Pool({ connectionString: NEON_DB_URL });
 	try {
 		const {
 			rows: [thing],
