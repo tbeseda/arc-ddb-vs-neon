@@ -1,5 +1,5 @@
 @app
-arc-ddb-vs-neon
+dbaas-v-dynamo
 
 @http
 get /

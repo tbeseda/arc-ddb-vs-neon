@@ -102,11 +102,10 @@ export const handler = arc.http.async(async () => {
 
 	<ul>
 		<li>attempt to pool or keep-alive connections</li>
-		<li>snapshot results or track variance</li>
+		<li>snapshot results or track variance over time</li>
 		<li>test subsequent queries</li>
 		<li>use a large dataset or a variety of db operations</li>
-		<li>thoroughly test congruent AWS/db provider regions</li>
-		<li>take into account pricing (examples are in service free tiers)</li>
+		<li>thoroughly consider resource regions</li>
 	</ul>
 
 	<p><small><a href="https://github.com/tbeseda/dbaas-lambda" target="_blank">Source code</a></small></p>
